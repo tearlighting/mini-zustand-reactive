@@ -1,5 +1,5 @@
 import { ref, effect } from "@vue/reactivity"
-import { useSyncExternalStore } from "react"
+import { useSyncExternalStore,useCallback,useState } from "react"
 import type { ISetData, ISubscriberParams } from "miniZustandReactive"
 
 export function createStore<T extends object>(initializer: (setData: ISetData<T>) => T) {
@@ -33,8 +33,14 @@ export function createUseStore<T extends Object>(initializer: (setData: ISetData
 }
 
 export function useStore<T extends Object, S>(store: ReturnType<typeof createStore<T>>, selector: (s: T) => S): S {
+  const stableSubscriber = useCallback((callback: ()=>void)=>{
+    store.subscribe({callback,selector})
+  },[])
+  const [stableSelector] = useState(()=>{
+    return () => selector(store.getState())
+  })
   return useSyncExternalStore(
-    (callback) => store.subscribe({ callback, selector }),
-    () => selector(store.getState())
+    stableSubscriber,
+    stableSelector
   )
 }
