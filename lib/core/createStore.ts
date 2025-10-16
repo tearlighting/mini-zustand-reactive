@@ -8,8 +8,12 @@ export function createStore<T extends object>(initializer: (setData: ISetData<T>
     callback(state.value)
   }
   const getState = () => state.value as T
-  const setState = (updater: (state: T) => void) => {
-    updater(state.value)
+  const setState = (partial: Partial<T> | ((s: T) => void)) => {
+    if (typeof partial === "function") {
+      partial(state.value)
+    } else {
+      Object.assign(state.value, partial)
+    }
   }
 
   const subscribe = ({ callback, selector }: ISubscriberParams<T>) => {
