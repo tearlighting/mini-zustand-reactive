@@ -1,6 +1,6 @@
 import { ref, effect } from "@vue/reactivity"
 import { useSyncExternalStore,useCallback,useState } from "react"
-import type { ISetData, ISubscriberParams } from "miniZustandReactive"
+import type { ISetData, ISubscriberParams } from "reactiveStore"
 
 export function createStore<T extends object>(initializer: (setData: ISetData<T>) => T) {
   const state = ref<T>(initializer(setData))
