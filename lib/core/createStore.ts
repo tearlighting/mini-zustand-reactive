@@ -1,6 +1,18 @@
-import { ref, effect } from "@vue/reactivity"
-import { useSyncExternalStore,useCallback,useState } from "react"
-import type { ISetData, ISubscriberParams } from "reactiveStore"
+import {
+  useCallback,
+  useState,
+  useSyncExternalStore,
+} from 'react';
+
+import type {
+  ISetData,
+  ISubscriberParams,
+} from 'reactiveStore';
+
+import {
+  effect,
+  ref,
+} from '@vue/reactivity';
 
 export function createStore<T extends object>(initializer: (setData: ISetData<T>) => T) {
   const state = ref<T>(initializer(setData))
@@ -37,10 +49,10 @@ export function createUseStore<T extends Object>(initializer: (setData: ISetData
 }
 
 export function useStore<T extends Object, S>(store: ReturnType<typeof createStore<T>>, selector: (s: T) => S): S {
-  const stableSubscriber = useCallback((callback: ()=>void)=>{
-    store.subscribe({callback,selector})
-  },[])
-  const [stableSelector] = useState(()=>{
+  const stableSubscriber = useCallback((callback: () => void) => {
+    return store.subscribe({ callback, selector })
+  }, [])
+  const [stableSelector] = useState(() => {
     return () => selector(store.getState())
   })
   return useSyncExternalStore(
